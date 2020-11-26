@@ -1,0 +1,11 @@
+cradle:
+    stack:
+        - path: ./test
+          component: "hs-template-nix:test:hs-template-nix-test"
+        - path: ./src
+          component: "hs-template-nix:lib"
+        - path: ./app
+          component: "hs-template-nix:exe:hs-template-nix-exe"
+
+dependencies:
+    - package.yaml
