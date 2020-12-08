@@ -7,9 +7,6 @@ test:
 run:
 	nix-shell --pure --run 'stack run'
 
-deps-init:
-	nix-shell -p niv --run "niv init"
-
 hoogle-build:
 	nix-shell --pure --run 'stack build --haddock --haddock-deps'
 
