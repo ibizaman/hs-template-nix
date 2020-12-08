@@ -1,3 +1,5 @@
+.PHONY: build test run hoogle-build hoogle-generate hoogle-serve cachix-enable cachix-push
+
 build:
 	nix-shell --pure --run 'stack build'
 
