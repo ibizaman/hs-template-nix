@@ -1,9 +1,9 @@
-name: "Test"
+name: "Nix Shell"
 on:
     pull_request:
     push:
 jobs:
-    tests:
+    shell:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v2.3.4
@@ -12,8 +12,4 @@ jobs:
               with:
                   name: ibizaman
                   authToken: "${{ secrets.CACHIX_IBIZAMAN_AUTHTOKEN }}"
-            - run: nix-build
-            - uses: actions/upload-artifact@v2
-              with:
-                  name: hs-template-nix-exe
-                  path: result/bin/hs-template-nix-exe
+            - run: nix-build shell.nix
