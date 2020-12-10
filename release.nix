@@ -16,7 +16,10 @@ let
       hpack = dontCheck (self.callHackage "hpack" "0.34.1" {});
       Cabal = dontCheck (self.callHackage "Cabal" "3.0.2.0" {});
 
-      hoogle = dontCheck (self.callHackage "hoogle" "5.0.18" {});
+      hoogle = dontCheck ((self.callHackage "hoogle" "5.0.18" {}).override {
+        # example pinning a package only for hoogle
+        extra = self.callHackage "extra" "1.7.4" {};
+      });
     };
   };
 
@@ -28,8 +31,6 @@ let
       stack = dontCheck (self.callHackage "stack" "2.3.1" {});
       hackage-security = dontCheck (self.callHackage "hackage-security" "0.6.0.0" {});
       pantry = dontCheck (self.callHackage "pantry" "0.4.0.1" {});
-
-      hoogle = dontCheck (self.callHackage "hoogle" "5.0.18" {});
     };
   };
 
