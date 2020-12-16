@@ -45,9 +45,7 @@ in
     ];
     buildInputs = with shellHaskellPackages; [
       stack
-      ghcide
-      brittany
-      hlint
+      haskell-language-server
     ];
     withHoogle = true;
   };

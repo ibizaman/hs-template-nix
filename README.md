@@ -11,48 +11,64 @@ This is a template haskell project to quickly get started using nix.
   - `package.yaml` is an [`hpack`](https://github.com/sol/hpack) file that generates a cabal file.
   - `stack.yaml`is used by stack to manage the whole project, see [here](https://docs.haskellstack.org/en/stable/stack_yaml_vs_cabal_package_file/).
   - `Makefile` contains all the targets to build the project.
-  - `modd.conf` is the config file for [`modd`](https://github.com/cortesi/modd).
+  - `modd.conf` is the config file for [`modd`](https://github.com/haskell/haskell-language-server).
 - Editor files:
-  - `hie.yaml` is the config file for [`ghcide`](https://github.com/haskell/ghcide/).
+  - `hie.yaml` is the config file for [`haskell-language-server`](https://github.com/haskell/haskell-language-server/).
 - Nix files:
   - `default.nix` used when running `nix-build`.
   - `shell.nix` used when running `nix-shell`.
   - `release.nix` is imported by `default.nix` and `shell.nix`.
 
-`nix-shell` includes [`ghcide`](https://github.com/haskell/ghcide/),
+`nix-shell` includes
+[`haskell-language-server`](https://github.com/haskell/haskell-language-server/),
 an LSP server
 
 ```bash
 $ nix-shell --pure
-[nix-shell] $ ghcide
-ghcide version: 0.3.0 (GHC: 8.6) (PATH: /nix/store/i0xbrrhzz5bavwmij7a4rix6fzyh4jhm-ghcide-0.3.0/bin/ghcide)
-Ghcide setup tester in /home/timi/projects/hs-template-nix.
-Report bugs at https://github.com/digital-asset/ghcide/issues
+[nix-shell] $ haskell-language-server-wrapper
+Found "/home/ibizaman/projects/hs-template-nix/hie.yaml" for "/home/ibizaman/projects/hs-template-nix/a"
+Module "/home/ibizaman/projects/hs-template-nix/a" is loaded by Cradle: Cradle {cradleRootDir = "/home/ibizaman/projects/hs-template-nix", cradleOptsProg = CradleAction: Stack}
+Run entered for haskell-language-server-wrapper(haskell-language-server-wrapper) Version 0.4.0.0 x86_64 ghc-8.6.5
+Current directory: /home/ibizaman/projects/hs-template-nix
+Operating system: linux
+Arguments: []
+Cradle directory: /home/ibizaman/projects/hs-template-nix
+Cradle type: Stack
 
-Step 1/4: Finding files to test in /home/timi/projects/hs-template-nix
+Tool versions found on the $PATH
+cabal:          Not found
+stack:          2.3.1
+ghc:            8.6.5
+
+
+Step 1/4: Finding files to test in /home/ibizaman/projects/hs-template-nix
 Found 4 files
 
 Step 2/4: Looking for hie.yaml files that control setup
 Found 1 cradle
 
 Step 3/4: Initializing the IDE
-[DEBUG] Warning: Client does not support watched files. Falling back to OS polling
 
-Step 4/4: Type checking the files
+Step 4/4: Type checking the file
 
 [...]
 
-[INFO] finish: User TypeCheck (took 0.06s)
-
-Completed (4 files worked, 0 files failed
+[INFO] finish: User TypeCheck (took 0.04s)Completed (4 files worked, 0 files failed)
 ```
 
-[`brittany`](https://github.com/lspitzner/brittany), a
-code formatter:
+A few code formatters:
+ - [`ormolu`](https://github.com/tweag/ormolu) (default formatter for haskell-language-server)
+```bash
+[nix-shell] $ ormolu --mode check $(find . -name '*.hs' -not -path "./.stack-work/*"); echo $?
+```
+ - [`brittany`](https://github.com/lspitzner/brittany) (fails as code is formatter with ormolu)
 ```bash
 [nix-shell] $ brittany --check-mode */*.hs; echo $?
-0
+1
 ```
+ - [`floskell`](https://hackage.haskell.org/package/floskell)
+ - [`fourmolu`](https://github.com/parsonsmatt/fourmolu)
+ - [`stylish-haskell`](https://github.com/jaspervdj/stylish-haskell)
 
 and [`hlint`](https://github.com/ndmitchell/hlint), a
 code improvement suggester:
@@ -156,11 +172,22 @@ To download it, follow these steps:
 
 ## Editor integration
 
-This is mostly about integrating your editor with the `ghcide`,
-`brittany` and `hlint` executables found inside the `nix-shell`.
+This is mostly about integrating your editor with the
+`haskell-language-server` executable found inside the `nix-shell`,
+which handles linters and formatters.
 
-About `ghcide`, the [hie.nix](hie.nix) file helps it find the files in
-the `app/`, `src/` and `test/` folders.
+About `haskell-language-server`, the [hie.nix](hie.nix) file helps it
+find the files in the `app/`, `src/` and `test/` folders and know with
+which stack target to associate it. Later if you extend your codebase,
+you can run `nix-shell --pure --run 'stack ide targets'` to get a full
+list like:
+
+```
+$ nix-shell --pure --run 'stack ide targets'
+hs-template-nix:lib
+hs-template-nix:exe:hs-template-nix-exe
+hs-template-nix:test:hs-template-nix-test
+```
 
 ### Emacs
 
@@ -256,7 +283,7 @@ inside nix-shell whenever the project is using nix.
 	(if-let ((sandbox (nix-current-sandbox)))
 		(apply 'nix-shell-command sandbox args)
 	  args))
-  (setq lsp-haskell-process-path-hie "ghcide"
+  (setq lsp-haskell-process-path-hie "haskell-language-server-wrapper"
 		lsp-haskell-process-args-hie '()
 		lsp-haskell-process-wrapper-function 'my/nix--lsp-haskell-wrapper))
 
