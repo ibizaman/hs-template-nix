@@ -283,9 +283,8 @@ inside nix-shell whenever the project is using nix.
 	(if-let ((sandbox (nix-current-sandbox)))
 		(apply 'nix-shell-command sandbox args)
 	  args))
-  (setq lsp-haskell-process-path-hie "haskell-language-server-wrapper"
-		lsp-haskell-process-args-hie '()
-		lsp-haskell-process-wrapper-function 'my/nix--lsp-haskell-wrapper))
+  (setq lsp-haskell-server-path "haskell-language-server-wrapper"
+		lsp-haskell-server-wrapper-function 'my/nix--lsp-haskell-wrapper))
 
 (use-package nix-mode
   :straight t
